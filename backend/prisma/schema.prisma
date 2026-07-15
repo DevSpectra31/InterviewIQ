@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── User Model ──────────────────────────────────────────────────────
+model User {
+  id             String      @id @default(uuid())
+  name           String      @db.VarChar(100)
+  email          String      @unique @db.VarChar(255)
+  password       String
+  avatar         String?     @default("")
+  role           Role        @default(USER)
+  bio            String?     @default("") @db.VarChar(500)
+  skills         String[]    @default([])
+  experience     Experience  @default(FRESHER)
+  interviewCount Int         @default(0)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  // Relations
+  interviews     Interview[]
+
+  @@map("users")
+}
+
+// ─── Interview Model ─────────────────────────────────────────────────
+model Interview {
+  id           String          @id @default(uuid())
+  userId       String
+  type         InterviewType
+  topic        String
+  difficulty   Difficulty      @default(MEDIUM)
+  status       InterviewStatus @default(PENDING)
+  overallScore Int?
+  feedback     String?         @default("")
+  startedAt    DateTime?
+  completedAt  DateTime?
+  duration     Int?            // in minutes
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  // Relations
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questions    Question[]
+
+  @@index([userId])
+  @@map("interviews")
+}
+
+// ─── Question Model (was embedded in Mongoose, now a separate table) ─
+model Question {
+  id              String    @id @default(uuid())
+  interviewId     String
+  questionText    String
+  answerText      String?   @default("")
+  score           Int?      // 0-10
+  isFollowUp      Boolean   @default(false)
+  askedAt         DateTime  @default(now())
+  answeredAt      DateTime?
+
+  // Evaluation fields (flattened from nested object)
+  strengths       String[]  @default([])
+  weaknesses      String[]  @default([])
+  missingConcepts String[]  @default([])
+  idealAnswer     String?   @default("")
+  suggestions     String[]  @default([])
+
+  // Relations
+  interview       Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+
+  @@index([interviewId])
+  @@map("questions")
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Experience {
+  FRESHER
+  JUNIOR
+  MID
+  SENIOR
+  LEAD
+}
+
+enum InterviewType {
+  TECHNICAL
+  HR
+  RESUME
+  COMPANY
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum InterviewStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
