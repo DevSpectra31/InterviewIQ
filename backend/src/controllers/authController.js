@@ -4,6 +4,15 @@ import ApiError from '../utils/ApiError.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import generateToken from '../utils/generateToken.js';
 
+// ─── Cookie options ──────────────────────────────────────────────────
+const getCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
+  maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+  path: '/',
+});
+
 // ─── Helper: Build user response with token ──────────────────────────
 const buildUserResponse = (user, token) => ({
   id: user.id,
@@ -68,6 +77,9 @@ export const register = asyncHandler(async (req, res) => {
   // Generate JWT
   const token = generateToken(user.id);
 
+  // Set token as httpOnly cookie
+  res.cookie('token', token, getCookieOptions());
+
   res.status(201).json({
     success: true,
     message: 'Registration successful',
@@ -100,6 +112,9 @@ export const login = asyncHandler(async (req, res) => {
 
   // Generate JWT
   const token = generateToken(user.id);
+
+  // Set token as httpOnly cookie
+  res.cookie('token', token, getCookieOptions());
 
   res.status(200).json({
     success: true,
@@ -197,6 +212,9 @@ export const changePassword = asyncHandler(async (req, res) => {
 
   // Generate new token
   const token = generateToken(user.id);
+
+  // Set new token as httpOnly cookie
+  res.cookie('token', token, getCookieOptions());
 
   res.status(200).json({
     success: true,
