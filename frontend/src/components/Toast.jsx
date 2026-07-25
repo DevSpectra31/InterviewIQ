@@ -106,3 +106,37 @@ function ToastItem({ toast, onClose }) {
     </motion.div>
   );
 }
+
+// ─── Default Export Banner Toast Component ──────────────────────────
+export default function Toast({ type = 'info', message, title, onClose }) {
+  if (!message) return null;
+  const Icon = iconMap[type] || Info;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className={`p-4 rounded-xl border flex items-center justify-between gap-3 text-xs font-medium ${
+        type === 'error'
+          ? 'bg-rose-950/40 border-rose-500/30 text-rose-300'
+          : type === 'success'
+          ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-300'
+          : 'bg-slate-900 border-slate-800 text-slate-300'
+      }`}
+    >
+      <div className="flex items-center gap-2">
+        <Icon className={`w-4 h-4 shrink-0 ${colorMap[type] || 'text-slate-400'}`} />
+        <div>
+          {title && <span className="font-bold block">{title}</span>}
+          <span>{message}</span>
+        </div>
+      </div>
+      {onClose && (
+        <button onClick={onClose} className="p-1 hover:opacity-80">
+          <X className="w-4 h-4" />
+        </button>
+      )}
+    </motion.div>
+  );
+}
