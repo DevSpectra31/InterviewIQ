@@ -80,19 +80,26 @@ export default function AppLayout() {
 
           {/* Right Actions */}
           <div className="flex items-center space-x-3">
-            <button className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800">
+            <Link
+              to="/profile"
+              className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800"
+              title="Profile Settings"
+            >
               <Settings className="w-5 h-5" />
-            </button>
+            </Link>
 
             {/* User Info */}
-            <div className="hidden sm:flex items-center space-x-2 border-l border-slate-800 pl-3">
+            <Link
+              to="/profile"
+              className="hidden sm:flex items-center space-x-2 border-l border-slate-800 pl-3 no-underline hover:opacity-80 transition-opacity"
+            >
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
                 {user?.name?.charAt(0)?.toUpperCase() || 'U'}
               </div>
               <span className="text-sm font-medium text-slate-300 max-w-[100px] truncate">
                 {user?.name || 'Candidate'}
               </span>
-            </div>
+            </Link>
 
             {/* Logout */}
             <button

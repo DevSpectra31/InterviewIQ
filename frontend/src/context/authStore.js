@@ -125,6 +125,14 @@ const useAuthStore = create((set) => ({
   },
 
   /**
+   * Update current user in store & localStorage.
+   */
+  updateUser: (updatedUser) => {
+    localStorage.setItem('interviewiq_user', JSON.stringify(updatedUser));
+    set({ user: updatedUser });
+  },
+
+  /**
    * Clear any stored error.
    */
   clearError: () => set({ error: null }),

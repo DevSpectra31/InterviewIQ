@@ -12,6 +12,8 @@ import ApiError from './utils/ApiError.js';
 // ─── Route Imports ───────────────────────────────────────────────────
 import authRoutes from './routes/authRoutes.js';
 import interviewRoutes from './routes/interviewRoutes.js';
+import questionRoutes from './routes/questionRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 
 // ─── Load Environment Variables ──────────────────────────────────────
@@ -42,7 +44,9 @@ app.get('/api/health', (req, res) => {
 
 // ─── API Routes ──────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
+app.use('/api/interviews/:interviewId/questions', questionRoutes);
 app.use('/api/interviews', interviewRoutes);
+app.use('/api/analytics', analyticsRoutes);
 app.use('/api/users', userRoutes);
 
 // ─── 404 Catch-All ───────────────────────────────────────────────────
